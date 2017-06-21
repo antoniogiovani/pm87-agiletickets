@@ -3,6 +3,13 @@ package br.com.caelum.agiletickets.models;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.sql.Date;
+import java.util.List;
+
+import junit.framework.Assert;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Test;
 
 public class EspetaculoTest {
@@ -80,5 +87,40 @@ public class EspetaculoTest {
 
 		return sessao;
 	}
+	@Test
+	public void DeveInformarQueNaoEhPossivelSessaoDiariaComMaisDeUmDia() {
+		Espetaculo show = new Espetaculo();
+		LocalDate ini = new LocalDate();
+		LocalDate fim = new LocalDate();
+		LocalTime hora = new LocalTime();
+		Periodicidade diaria = Periodicidade.DIARIA;
+		List<Sessao> sessoes = show.criaSessoes(ini, fim, hora, diaria);
+		
+		
+		show.criaSessoes(ini, fim, hora, diaria);
+		Assert.assertEquals(1,sessoes.size());
+		
+		Sessao unica = sessoes.get(0);
+		Assert.assertEquals(show,unica.getEspetaculo());
+		Assert.assertEquals(ini.toDateTime(hora), unica.getInicio());
+	}
+	
+	@Test
+	public void DeveInformarQueNaoEhPossivelSessaoSemanalComZeroSemana() {
+		Espetaculo show = new Espetaculo();
+		LocalDate ini = new LocalDate();
+		LocalDate fim = new LocalDate();
+		LocalTime hora = new LocalTime();
+		Periodicidade semana = Periodicidade.SEMANAL;
+		List<Sessao> sessoes = show.criaSessoes(ini, fim, hora, semana);
+				
+		show.criaSessoes(ini, fim, hora, semana);
+		Assert.assertEquals(0,sessoes.size());
+		
+		Sessao unica = sessoes.get(0);
+		Assert.assertEquals(show,unica.getEspetaculo());
+		Assert.assertEquals(ini.toDateTime(hora), unica.getInicio());
+	}
+	
 	
 }
