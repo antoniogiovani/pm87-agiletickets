@@ -88,39 +88,103 @@ public class EspetaculoTest {
 		return sessao;
 	}
 	@Test
-	public void DeveInformarQueNaoEhPossivelSessaoDiariaComMaisDeUmDia() {
-		Espetaculo show = new Espetaculo();
-		LocalDate ini = new LocalDate();
-		LocalDate fim = new LocalDate();
-		LocalTime hora = new LocalTime();
-		Periodicidade diaria = Periodicidade.DIARIA;
-		List<Sessao> sessoes = show.criaSessoes(ini, fim, hora, diaria);
+	public void deveriaCriarApenasUmaSessaoSeDatasDeInicioEFimForemIguaisEPeriodicidadeForDiaria() {
+		//ENTRADAS
+		LocalDate hoje = new LocalDate();
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
 		
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(hoje, hoje, agora, Periodicidade.DIARIA);
 		
-		show.criaSessoes(ini, fim, hora, diaria);
-		Assert.assertEquals(1,sessoes.size());
-		
-		Sessao unica = sessoes.get(0);
-		Assert.assertEquals(show,unica.getEspetaculo());
-		Assert.assertEquals(ini.toDateTime(hora), unica.getInicio());
+		//SAIDAS
+		Assert.assertEquals(1, criadas.size());
+		Assert.assertEquals(impeachment, criadas.get(0).getEspetaculo());
+		Assert.assertEquals(hoje.toDateTime(agora), criadas.get(0).getInicio());
 	}
 	
 	@Test
-	public void DeveInformarQueNaoEhPossivelSessaoSemanalComZeroSemana() {
-		Espetaculo show = new Espetaculo();
-		LocalDate ini = new LocalDate();
-		LocalDate fim = new LocalDate();
-		LocalTime hora = new LocalTime();
-		Periodicidade semana = Periodicidade.SEMANAL;
-		List<Sessao> sessoes = show.criaSessoes(ini, fim, hora, semana);
-				
-		show.criaSessoes(ini, fim, hora, semana);
-		Assert.assertEquals(0,sessoes.size());
+	public void deveriaCriarApenasUmaSessaoSeDatasDeInicioEFimForemIguaisEPeriodicidadeForSemanal() {
+		//ENTRADAS
+		LocalDate hoje = new LocalDate();
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
 		
-		Sessao unica = sessoes.get(0);
-		Assert.assertEquals(show,unica.getEspetaculo());
-		Assert.assertEquals(ini.toDateTime(hora), unica.getInicio());
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(hoje, hoje, agora, Periodicidade.SEMANAL);
+		
+		//SAIDAS
+		Assert.assertEquals(1, criadas.size());
+		Assert.assertEquals(impeachment, criadas.get(0).getEspetaculo());
+		Assert.assertEquals(hoje.toDateTime(agora), criadas.get(0).getInicio());
 	}
 	
+	@Test
+	public void deveriaCriar11SessoesSeIntervaloDeDatasForDe10DiasEPeriodicidadeForDiaria() {
+		//ENTRADAS
+		LocalDate hoje = new LocalDate();
+		LocalDate daqui10Dias = hoje.plusDays(10);
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
+		
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(hoje, daqui10Dias, agora, Periodicidade.DIARIA);
+		
+		//SAIDAS
+		Assert.assertEquals(11, criadas.size());
+		for (int i = 0; i < 11; i++) {
+			Assert.assertEquals(impeachment, criadas.get(i).getEspetaculo());
+			Assert.assertEquals(hoje.plusDays(i).toDateTime(agora), criadas.get(i).getInicio());
+		}
+	}
 	
+	@Test
+	public void deveriaCriar4SessoesSeIntervaloDeDatasForDe3SemanasEPeriodicidadeForSemanal() {
+		//ENTRADAS
+		LocalDate hoje = new LocalDate();
+		LocalDate daqui3Semanas= hoje.plusWeeks(3);
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
+		
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(hoje, daqui3Semanas, agora, Periodicidade.SEMANAL);
+		
+		//SAIDAS
+		Assert.assertEquals(4, criadas.size());
+		for (int i = 0; i < 4; i++) {
+			Assert.assertEquals(impeachment, criadas.get(i).getEspetaculo());
+			Assert.assertEquals(hoje.plusWeeks(i).toDateTime(agora), criadas.get(i).getInicio());
+		}
+	}
+	
+	@Test
+	public void naoDeveriaCriarSessoesSeDataInicioForMaiorQueDataFimEPeriodicidadeForDiaria() {
+		//ENTRADAS
+		LocalDate amanha = new LocalDate().plusDays(1);
+		LocalDate hoje = new LocalDate();
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
+		
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(amanha, hoje, agora, Periodicidade.DIARIA);
+		
+		//SAIDAS
+		Assert.assertEquals(0, criadas.size());
+	}
+	
+	@Test
+	public void naoDeveriaCriarSessoesSeDataInicioForMaiorQueDataFimEPeriodicidadeForSemanal() {
+		//ENTRADAS
+		LocalDate amanha = new LocalDate().plusDays(1);
+		LocalDate hoje = new LocalDate();
+		LocalTime agora = new LocalTime();
+		Espetaculo impeachment = new Espetaculo();
+		
+		//PROCESSAMENTO
+		List<Sessao> criadas = impeachment.criaSessoes(amanha, hoje, agora, Periodicidade.SEMANAL);
+		
+		//SAIDAS
+		Assert.assertEquals(0, criadas.size());
+	}
 }
+
